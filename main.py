@@ -23,7 +23,7 @@ def start(store):
 
         if choice == "1" or choice == "3":
             for index, product in enumerate(store.get_all_products()):
-                print(f"{index + 1}. {product.show()}")
+                print(f"{index + 1}. {product}")
 
         if choice == "2":
             print(f"Total of {store.get_total_quantity()} items in store")

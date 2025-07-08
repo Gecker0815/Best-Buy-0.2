@@ -41,7 +41,7 @@ class Product:
     def deactivate(self):
         self.active = False
 
-    def show(self):
+    def __str__(self):
         if self.promotion:
             return f"{self.name}, Price: {self.price}, Quantity: {self.quantity}, Promotion: {self._promotion}"
         else:
@@ -65,7 +65,7 @@ class NonStockedProduct(Product):
         super().__init__(name, price, 0)
         pass
 
-    def show(self):
+    def __str__(self):
         return f"{self.name}, Price: {self.price}"
 
     def buy(self, quantity):
@@ -79,7 +79,7 @@ class LimitedProduct(Product):
         self.maximum = maximum
         pass
 
-    def show(self):
+    def __str__(self):
         return f"{self.name}, Price: {self.price}, Quantity: {self.quantity}, Maximum:{self.maximum}"
 
     def buy(self, quantity):
