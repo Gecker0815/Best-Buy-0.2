@@ -1,6 +1,7 @@
 import pytest
 from products import Product, NonStockedProduct, LimitedProduct
 from store import Store
+from promotion import SecondHalfPrice, ThirdOneFree, PercentDiscount
 
 # ---------------------- Product Tests ----------------------
 
@@ -65,7 +66,7 @@ def test_non_stocked_product_buy_does_not_change_quantity():
     product = NonStockedProduct("Streaming Subscription", 9.99)
     price = product.buy(1)
     assert price == 9.99
-    assert product.get_quantity() == 0  # quantity bleibt unverändert
+    assert product.get_quantity() == 0
 
 def test_non_stocked_product_show_output():
     product = NonStockedProduct("eBook", 5.49)
@@ -79,7 +80,7 @@ def test_non_stocked_product_show_output():
 def test_limited_product_respects_maximum_quantity():
     product = LimitedProduct("Concert Ticket", 120.0, 10, 2)
     with pytest.raises(ValueError):
-        product.buy(3)  # über Maximum
+        product.buy(3)
 
 def test_limited_product_buy_within_maximum():
     product = LimitedProduct("Concert Ticket", 120.0, 10, 3)
@@ -141,6 +142,46 @@ def test_order_with_multiple_products():
     assert total == 800 + 60
     assert p1.get_quantity() == 1
     assert p2.get_quantity() == 2
+
+# ---------------------- Promotion Tests ----------------------
+
+def test_buy_with_percent_discount():
+    product = Product("Sunglasses", 100, 5)
+    discount = PercentDiscount("30% Off", percent=30)
+    product.promotion = discount
+
+    result = product.buy(2)
+    assert result == 140.0
+    assert product.get_quantity() == 3
+
+def test_buy_with_third_one_free():
+    product = Product("Notebook", 20, 9)
+    promo = ThirdOneFree("Buy 2, get 1 free")
+    product.promotion = promo
+
+    result = product.buy(3)
+    assert result == 40.0
+    assert product.get_quantity() == 6
+
+def test_buy_with_second_half_price():
+    product = Product("T-Shirt", 50, 4)
+    promo = SecondHalfPrice("Second item half off")
+    product.promotion = promo
+
+    result = product.buy(2)
+    assert result == 75.0
+    assert product.get_quantity() == 2
+
+def test_buy_without_promotion():
+    product = Product("Mug", 10, 5)
+    result = product.buy(2)
+    assert result == 20.0
+    assert product.get_quantity() == 3
+
+def test_setting_invalid_promotion_type_raises():
+    product = Product("Lamp", 60, 5)
+    with pytest.raises(TypeError):
+        product.promotion = "Not a promotion"
 
 # ---------------------- Pytest Trigger ----------------------
 

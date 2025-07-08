@@ -1,3 +1,5 @@
+from promotion import Promotion
+
 class Product:
 
     def __init__(self, name, price, quantity):
@@ -12,6 +14,17 @@ class Product:
         self.price = price
         self.quantity = quantity
         self.active = True
+        self._promotion  = None
+
+    @property
+    def promotion(self):
+        return self._promotion
+
+    @promotion.setter
+    def promotion(self, promotion):
+        if not isinstance(promotion, Promotion) and promotion is not None:
+            raise TypeError("promotion must be an instance of Promotion or None")
+        self._promotion = promotion
 
     def get_quantity(self):
         return self.quantity
@@ -29,13 +42,21 @@ class Product:
         self.active = False
 
     def show(self):
-        return f"{self.name}, Price: {self.price}, Quantity: {self.quantity}"
+        if self.promotion:
+            return f"{self.name}, Price: {self.price}, Quantity: {self.quantity}, Promotion: {self._promotion}"
+        else:
+            return f"{self.name}, Price: {self.price}, Quantity: {self.quantity}"
 
     def buy(self, quantity):
         if self.quantity - quantity < 0:
             raise ValueError("Not enough stock available to complete this purchase.")
+
         self.quantity -= quantity
-        return float(quantity * self.price)
+
+        if self.promotion:
+            return self.promotion.apply_promotion(self, quantity)
+        else:
+            return float(quantity * self.price)
 
 
 class NonStockedProduct(Product):
