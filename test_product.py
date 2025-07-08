@@ -1,5 +1,5 @@
 import pytest
-from products import Product
+from products import Product, NonStockedProduct, LimitedProduct
 from store import Store
 
 # ---------------------- Product Tests ----------------------
@@ -53,6 +53,47 @@ def test_product_activate_deactivate_flow():
     assert not product.is_active()
     product.activate()
     assert product.is_active()
+
+# ---------------------- NonStockedProduct Tests ----------------------
+
+def test_non_stocked_product_has_zero_quantity():
+    product = NonStockedProduct("Streaming Subscription", 9.99)
+    assert product.get_quantity() == 0
+    assert product.is_active()
+
+def test_non_stocked_product_buy_does_not_change_quantity():
+    product = NonStockedProduct("Streaming Subscription", 9.99)
+    price = product.buy(1)
+    assert price == 9.99
+    assert product.get_quantity() == 0  # quantity bleibt unverändert
+
+def test_non_stocked_product_show_output():
+    product = NonStockedProduct("eBook", 5.49)
+    display = product.show()
+    assert "eBook" in display
+    assert "Price: 5.49" in display
+    assert "Quantity" not in display
+
+# ---------------------- LimitedProduct Tests ----------------------
+
+def test_limited_product_respects_maximum_quantity():
+    product = LimitedProduct("Concert Ticket", 120.0, 10, 2)
+    with pytest.raises(ValueError):
+        product.buy(3)  # über Maximum
+
+def test_limited_product_buy_within_maximum():
+    product = LimitedProduct("Concert Ticket", 120.0, 10, 3)
+    price = product.buy(2)
+    assert price == 240.0
+    assert product.get_quantity() == 8
+
+def test_limited_product_show_output_contains_maximum():
+    product = LimitedProduct("VIP Pass", 199.99, 5, 1)
+    display = product.show()
+    assert "VIP Pass" in display
+    assert "Price: 199.99" in display
+    assert "Quantity: 5" in display
+    assert "Maximum:1" in display
 
 # ---------------------- Store Tests ----------------------
 
