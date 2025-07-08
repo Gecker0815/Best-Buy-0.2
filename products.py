@@ -17,6 +17,22 @@ class Product:
         self._promotion  = None
 
     @property
+    def price(self):
+        return self._price
+
+    @price.setter
+    def price(self, value):
+        if not isinstance(value, (int, float)) or value < 0:
+            raise ValueError("Price must be a non-negative number.")
+        self._price = value
+
+    def __lt__(self, other):
+        return self.price < other.price
+
+    def __gt__(self, other):
+        return self.price > other.price
+
+    @property
     def promotion(self):
         return self._promotion
 

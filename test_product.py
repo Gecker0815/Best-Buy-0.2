@@ -41,9 +41,9 @@ def test_set_quantity_updates_correctly():
     product.set_quantity(5)
     assert product.get_quantity() == 5
 
-def test_product_show_output():
+def test_product_output():
     product = Product("Smartwatch", 199.99, 25)
-    display = product.show()
+    display = str(product)
     assert "Smartwatch" in display
     assert "Price: 199.99" in display
     assert "Quantity: 25" in display
@@ -54,6 +54,30 @@ def test_product_activate_deactivate_flow():
     assert not product.is_active()
     product.activate()
     assert product.is_active()
+
+# ---------------------- Price Property & Comparison Tests ----------------------
+
+def test_price_property_allows_valid_value():
+    product = Product("Router", 120, 10)
+    product.price = 150
+    assert product.price == 150
+
+def test_price_property_raises_error_on_negative_value():
+    product = Product("Router", 120, 10)
+    with pytest.raises(ValueError):
+        product.price = -10
+
+def test_product_comparison_lt():
+    p1 = Product("Basic Phone", 300, 5)
+    p2 = Product("Smartphone", 800, 5)
+    assert p1 < p2
+    assert not p2 < p1
+
+def test_product_comparison_gt():
+    p1 = Product("Basic Phone", 300, 5)
+    p2 = Product("Smartphone", 800, 5)
+    assert p2 > p1
+    assert not p1 > p2
 
 # ---------------------- NonStockedProduct Tests ----------------------
 
@@ -68,9 +92,9 @@ def test_non_stocked_product_buy_does_not_change_quantity():
     assert price == 9.99
     assert product.get_quantity() == 0
 
-def test_non_stocked_product_show_output():
+def test_non_stocked_product_output():
     product = NonStockedProduct("eBook", 5.49)
-    display = product.show()
+    display = str(product)
     assert "eBook" in display
     assert "Price: 5.49" in display
     assert "Quantity" not in display
@@ -88,9 +112,9 @@ def test_limited_product_buy_within_maximum():
     assert price == 240.0
     assert product.get_quantity() == 8
 
-def test_limited_product_show_output_contains_maximum():
+def test_limited_product_output_contains_maximum():
     product = LimitedProduct("VIP Pass", 199.99, 5, 1)
-    display = product.show()
+    display = str(product)
     assert "VIP Pass" in display
     assert "Price: 199.99" in display
     assert "Quantity: 5" in display
@@ -143,13 +167,23 @@ def test_order_with_multiple_products():
     assert p1.get_quantity() == 1
     assert p2.get_quantity() == 2
 
+def test_store_contains_product_true():
+    p1 = Product("Camera", 500, 2)
+    shop = Store([p1])
+    assert p1 in shop
+
+def test_store_contains_product_false():
+    p1 = Product("Camera", 500, 2)
+    p2 = Product("Tripod", 80, 4)
+    shop = Store([p1])
+    assert p2 not in shop
+
 # ---------------------- Promotion Tests ----------------------
 
 def test_buy_with_percent_discount():
     product = Product("Sunglasses", 100, 5)
     discount = PercentDiscount("30% Off", percent=30)
     product.promotion = discount
-
     result = product.buy(2)
     assert result == 140.0
     assert product.get_quantity() == 3
@@ -158,7 +192,6 @@ def test_buy_with_third_one_free():
     product = Product("Notebook", 20, 9)
     promo = ThirdOneFree("Buy 2, get 1 free")
     product.promotion = promo
-
     result = product.buy(3)
     assert result == 40.0
     assert product.get_quantity() == 6
@@ -167,10 +200,33 @@ def test_buy_with_second_half_price():
     product = Product("T-Shirt", 50, 4)
     promo = SecondHalfPrice("Second item half off")
     product.promotion = promo
-
     result = product.buy(2)
     assert result == 75.0
     assert product.get_quantity() == 2
+
+def test_buy_exact_quantity_for_third_one_free():
+    product = Product("Notebook", 20, 6)
+    promo = ThirdOneFree("Buy 2, get 1 free")
+    product.promotion = promo
+    result = product.buy(6)
+    assert result == 80.0
+    assert product.get_quantity() == 0
+
+def test_second_half_price_with_odd_quantity():
+    product = Product("T-Shirt", 50, 5)
+    promo = SecondHalfPrice("Second item half off")
+    product.promotion = promo
+    result = product.buy(5)
+    assert result == 175.0
+    assert product.get_quantity() == 0
+
+def test_percent_discount_full_coverage():
+    product = Product("Sticker Pack", 10, 10)
+    promo = PercentDiscount("100% Off", percent=100)
+    product.promotion = promo
+    result = product.buy(2)
+    assert result == 0.0
+    assert product.get_quantity() == 8
 
 def test_buy_without_promotion():
     product = Product("Mug", 10, 5)

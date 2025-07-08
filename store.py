@@ -17,6 +17,9 @@ class Store:
     def get_all_products(self):
         return [product for product in self.products if product.is_active()]
 
+    def __contains__(self, item):
+        return item in self.products
+
     def order(self, shopping_list):
         total_price = 0
         for product, quantity in shopping_list:
