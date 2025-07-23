@@ -1,4 +1,4 @@
-from promotion import Promotion
+from promotions import Promotion
 
 class Product:
     """Represents a product in the store."""

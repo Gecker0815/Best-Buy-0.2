@@ -1,7 +1,7 @@
 import pytest
 from products import Product, NonStockedProduct, LimitedProduct
 from store import Store
-from promotion import SecondHalfPrice, ThirdOneFree, PercentDiscount
+from promotions import SecondHalfPrice, ThirdOneFree, PercentDiscount
 
 # ---------------------- Product Tests ----------------------
 
