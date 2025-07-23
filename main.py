@@ -1,7 +1,6 @@
 import products
 import store
 
-# setup initial stock of inventory
 product_list = [ products.Product("MacBook Air M2", price=1450, quantity=100),
                  products.Product("Bose QuietComfort Earbuds", price=250, quantity=500),
                  products.Product("Google Pixel 7", price=500, quantity=250)
@@ -9,7 +8,8 @@ product_list = [ products.Product("MacBook Air M2", price=1450, quantity=100),
 best_buy = store.Store(product_list)
 
 
-def start(store):
+def run_store_interface(store):
+    "Runs the store interface with options to display products, stock and make orders."
     while True:
         print("\n--- Store Menu ---")
         print("1. List all products in store")
@@ -49,4 +49,9 @@ def start(store):
             break
 
 
-start(best_buy)
+def main():
+    run_store_interface(best_buy)
+
+
+if __name__ == '__main__':
+    main()

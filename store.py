@@ -1,5 +1,5 @@
 class Store:
-
+    """Manages products, stock, and orders for the store."""
     def __init__(self, products=None):
         if products is None:
             products = []

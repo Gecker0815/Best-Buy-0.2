@@ -1,7 +1,7 @@
 from promotion import Promotion
 
 class Product:
-
+    """Represents a product in the store."""
     def __init__(self, name, price, quantity):
         if not isinstance(name, str):
             raise TypeError("Name must be of type str")
@@ -76,7 +76,7 @@ class Product:
 
 
 class NonStockedProduct(Product):
-
+    """Represents a non-stocked product that can be bought without limit."""
     def __init__(self, name, price):
         super().__init__(name, price, 0)
         pass
@@ -89,7 +89,7 @@ class NonStockedProduct(Product):
 
 
 class LimitedProduct(Product):
-
+    """Represents a limited quantity product with a maximum purchase limit."""
     def __init__(self, name, price, quantity, maximum):
         super().__init__(name, price, quantity)
         self.maximum = maximum
