@@ -23,7 +23,7 @@ best_buy = Store(product_list)
 
 
 def show_list_products(store):
-    """Displays a formatted list of all products with their special characteristics."""
+    """Display all products in the store."""
     products = store.get_all_products()
 
     for index, product in enumerate(products):
@@ -31,6 +31,7 @@ def show_list_products(store):
 
 
 def get_valid_choice(length):
+    """Get a valid menu choice from the user."""
     while True:
         choice = input(f"\nChoose an option (1–{length}): ")
 
@@ -45,7 +46,7 @@ def get_valid_choice(length):
 
 
 def make_order(store):
-    """Let user select products and quantities to create an order."""
+    """Create an order by selecting products and quantities."""
     products = store.get_all_products()
     max_num = len(products)
     cart = []
@@ -86,7 +87,7 @@ def make_order(store):
 
 
 def get_valid_num(query, max_num):
-    """Prompt user for a valid number between 1 and max_num."""
+    """Get a valid number between 1 and max_num."""
     while True:
         value = input(f"{query} (1–{max_num}): ")
 
@@ -101,7 +102,7 @@ def get_valid_num(query, max_num):
 
 
 def get_valid_float(query):
-    """Prompt user for a valid number."""
+    """Get a valid float number from the user."""
     while True:
         value = input(f"{query}: ")
 
@@ -116,8 +117,7 @@ def get_valid_float(query):
 
 
 def add_product(store):
-    """Add a new product to the store via user input."""
-
+    """Add a new product to the store."""
     print("\n--- Add New Product ---")
 
     name = input("Product name: ").strip()
@@ -174,7 +174,7 @@ def delete_product(store):
 
 
 def get_product_choice(products, title, allow_all=False):
-    """Let user choose a product from the list. Optionally allow 'All'."""
+    """Let the user choose a product from the list."""
     if not products:
         print("No products available.")
         return None
@@ -196,6 +196,7 @@ def get_product_choice(products, title, allow_all=False):
 
 
 def choose_promotion():
+    """Let the user choose a promotion type."""
     print("\nAdd promotion?")
     print("1. No promotion")
     print("2. Second Half Price")
@@ -206,7 +207,7 @@ def choose_promotion():
 
 
 def change_product_promotion(store):
-    """Change product promotion from the store."""
+    """Change the promotion of one or more products."""
     products = store.get_all_products()
     if not products:
         print("No products in store.")
@@ -240,10 +241,8 @@ def change_product_promotion(store):
     print("Promotion updated successfully.")
 
 
-
 def run_store_interface(store):
-    """Runs the store interface with options to display products, stock and make orders."""
-
+    """Run the interactive store menu."""
     menu =  {
         "List all products in store": lambda: show_list_products(store),
         "Show total amount in store": lambda: print(f"Total of {store.get_total_quantity()} items in store"),
@@ -266,7 +265,7 @@ def run_store_interface(store):
 
 
 def main():
-    """Starts the store interface."""
+    """Start the store interface."""
     run_store_interface(best_buy)
 
 
