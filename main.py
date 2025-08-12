@@ -82,7 +82,7 @@ def make_order(store):
 
         print(f"\nTotal to pay: {total_price:.2f} €")
     else:
-        print("\nNo products selected. Order cancelled.")
+        print("\nOrder cancelled.")
 
 
 def get_valid_num(query, max_num):
@@ -144,13 +144,7 @@ def add_product(store):
         maximum = int(get_valid_float("Maximum per order"))
         new_product = LimitedProduct(name, price, quantity, maximum)
 
-    print("\nAdd promotion?")
-    print("1. No promotion")
-    print("2. Second Half Price")
-    print("3. Third One Free")
-    print("4. Percent Discount")
-
-    promo_choice = get_valid_choice(4)
+    promo_choice = choose_promotion()
 
     if promo_choice == 2:
         new_product.promotion = SecondHalfPrice("Second Half Price")
@@ -164,6 +158,89 @@ def add_product(store):
     print(f"\nProduct '{new_product.name}' added to store!")
 
 
+def delete_product(store):
+    """Delete a product from the store."""
+    products = store.get_all_products()
+
+    choice = get_product_choice(products, 'Delete Product')
+    selected_product = products[choice - 1]
+
+    confirm = input(f"Are you sure you want to delete '{selected_product.name}'? (y/n): ").lower()
+    if confirm == 'y':
+        store.products.remove(selected_product)
+        print(f"Product '{selected_product.name}' deleted.")
+    else:
+        print("Deletion cancelled.")
+
+
+def get_product_choice(products, title, allow_all=False):
+    """Let user choose a product from the list. Optionally allow 'All'."""
+    if not products:
+        print("No products available.")
+        return None
+
+    print(f"\n--- {title} ---")
+    for i, product in enumerate(products, start=1):
+        print(f"{i}. {product.show()}")
+
+    if allow_all:
+        print(f"{len(products) + 1}. All products")
+
+    max_choice = len(products) + 1 if allow_all else len(products)
+    choice = get_valid_choice(max_choice)
+
+    if allow_all and choice == len(products) + 1:
+        return "ALL"
+    else:
+        return products[choice - 1]
+
+
+def choose_promotion():
+    print("\nAdd promotion?")
+    print("1. No promotion")
+    print("2. Second Half Price")
+    print("3. Third One Free")
+    print("4. Percent Discount")
+
+    return get_valid_choice(4)
+
+
+def change_product_promotion(store):
+    """Change product promotion from the store."""
+    products = store.get_all_products()
+    if not products:
+        print("No products in store.")
+        return
+
+    choice = get_product_choice(products, 'Change Product Promotion', allow_all=True)
+
+    if choice == "ALL":
+        selected_products = products
+    else:
+        selected_products = [choice]
+
+    promo_choice = choose_promotion()
+
+    confirm = input("Are you sure you want to change the promotion? (y/n): ").lower()
+    if confirm != 'y':
+        print("Change cancelled.")
+        return
+
+    for product in selected_products:
+        if promo_choice == 1:
+            product.promotion = None
+        elif promo_choice == 2:
+            product.promotion = SecondHalfPrice("Second Half Price")
+        elif promo_choice == 3:
+            product.promotion = ThirdOneFree("Third One Free")
+        elif promo_choice == 4:
+            percent = get_valid_num("Discount percent", max_num=100)
+            product.promotion = PercentDiscount(f"{percent}% off", percent)
+
+    print("Promotion updated successfully.")
+
+
+
 def run_store_interface(store):
     """Runs the store interface with options to display products, stock and make orders."""
 
@@ -171,8 +248,8 @@ def run_store_interface(store):
         "List all products in store": lambda: show_list_products(store),
         "Show total amount in store": lambda: print(f"Total of {store.get_total_quantity()} items in store"),
         "Add product": lambda: add_product(store),
-        "Delete product": lambda: "",
-        "Change product promotion": lambda:"",
+        "Delete product": lambda: delete_product(store),
+        "Change product promotion": lambda: change_product_promotion(store),
         "Make an order": lambda: make_order(store),
         "Quit": lambda: sys.exit("Bye!"),
     }
