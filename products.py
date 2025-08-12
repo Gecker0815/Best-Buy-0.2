@@ -76,7 +76,7 @@ class Product:
 
     def show(self):
         """Return detailed product info including promotion."""
-        base = f"{self.name}, Price: {self.price}, Quantity: {self.quantity}"
+        base = f"{self.name}, Price: {self.price}€, Quantity: {self.quantity}"
         if self.promotion:
             base += f", Promotion: {self.promotion}"
         return base
