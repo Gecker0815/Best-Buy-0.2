@@ -20,6 +20,10 @@ product_list[3].promotion = thirty_percent
 
 best_buy = store.Store(product_list)
 
+def show_list_products(products):
+    """Displays a formatted list of all products with their special characteristics."""
+    for index, product in enumerate(products):
+        print(f"{index + 1}. {product.show()}")
 
 def run_store_interface(store):
     """Runs the store interface with options to display products, stock and make orders."""
@@ -34,8 +38,7 @@ def run_store_interface(store):
         print("-----")
 
         if choice == "1":
-            for index, product in enumerate(store.get_all_products()):
-                print(f"{index + 1}. {product}")
+            show_list_products(store.get_all_products())
 
         elif choice == "2":
             print(f"Total of {store.get_total_quantity()} items in store")
@@ -61,12 +64,12 @@ def run_store_interface(store):
                 print(f"Invalid selection: {e}")
 
         elif choice == "4":
+            print("Exiting store. Goodbye!")
             break
 
-
 def main():
+    """Starts the store interface."""
     run_store_interface(best_buy)
-
 
 if __name__ == '__main__':
     main()
