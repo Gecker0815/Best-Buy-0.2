@@ -260,6 +260,8 @@ def run_store_interface(store):
 
         choice = get_valid_choice(len(menu))
 
+        print("")
+
         selected_action = menu[list(menu.keys())[choice - 1]]
         selected_action()
 
